@@ -1,40 +1,37 @@
 using Microsoft.Playwright;
 using PlaywrightUITests.Pages;
+using PlaywrightUITests.Utils;
 
 namespace PlaywrightUITests
 {
-    public class PlaywrightLoginTest
+    public class PlaywrightLoginTest :BaseTest
     {
-        [SetUp]
-        public void Setup()
+        [Test]
+        public async Task Login()
         {
+            await LoginPage.ClickFormAuthentication();
+            await LoginPage.EnterUsername("tomsmith");
+            await LoginPage.EnterPassword("SuperSecretPassword!");
+            await LoginPage.ClickLogin();
+
+            var flashMessageText = await SecurePage.FlashMessageText();
+
+            Assert.That(flashMessageText, Is.EqualTo(" You logged into a secure area!\n×"));
         }
 
         [Test]
-        public async Task Login ()
+        public async Task LogOut()
         {
-            //Playwright
-            using var playwright = await Playwright.CreateAsync();
-            //Browser
-            await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-            {
-                Headless = false
-            });
-            //Page
-            var page = await browser.NewPageAsync();
-            await page.GotoAsync("https://the-internet.herokuapp.com/");
-
-            var loginPage = new Login(page);
-            await loginPage.ClickFormAuthentication();
-            await loginPage.EnterUsername("tomsmith");
-            await loginPage.EnterPassword("SuperSecretPassword!");
-            await loginPage.ClickLogin();
-
-            var logoutPage = new Logout(page);
-            await logoutPage.ClickLogout();
+            await LoginPage.ClickFormAuthentication();
+            await LoginPage.EnterUsername("tomsmith");
+            await LoginPage.EnterPassword("SuperSecretPassword!");
+            await LoginPage.ClickLogin();
 
 
+            await SecurePage.ClickLogout();
+            var flashMessageText = await SecurePage.FlashMessageText();
 
+            Assert.That(flashMessageText, Is.EqualTo(" You logged out of the secure area!\n×"));
         }
     }
 }
