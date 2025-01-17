@@ -14,6 +14,9 @@ namespace PlaywrightUITests
             await LoginPage.EnterPassword("SuperSecretPassword!");
             await LoginPage.ClickLogin();
 
+            // Take a screenshot before assertion
+            await TakeScreenshotAsync("login_flash_message_screenshot");
+
             var flashMessageText = await SecurePage.FlashMessageText();
 
             Assert.That(flashMessageText, Is.EqualTo(" You logged into a secure area!\n×"));
@@ -29,6 +32,10 @@ namespace PlaywrightUITests
 
 
             await SecurePage.ClickLogout();
+
+            // Take a screenshot before assertion
+            await TakeScreenshotAsync("logout_flash_message_screenshot");
+
             var flashMessageText = await SecurePage.FlashMessageText();
 
             Assert.That(flashMessageText, Is.EqualTo(" You logged out of the secure area!\n×"));

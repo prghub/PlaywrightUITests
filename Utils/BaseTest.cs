@@ -1,6 +1,8 @@
 ﻿using Microsoft.Playwright;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using NUnit.Framework;
 using PlaywrightUITests.Pages;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PlaywrightUITests.Utils
 {
@@ -37,6 +39,18 @@ namespace PlaywrightUITests.Utils
         protected async Task NavigateToPageAsync(string url)
         {
             await Page.GotoAsync(url);
+        }
+
+        // Method to capture a screenshot
+        protected async Task TakeScreenshotAsync(string screenshotName)
+        {
+            var testName = TestContext.CurrentContext.Test.Name;
+
+            await Page.ScreenshotAsync(new PageScreenshotOptions
+            {
+                Path = $"Screenshots/{testName}_screenshot.png", // Dynamic test name
+                FullPage = true // Capture full-page screenshot
+            });
         }
 
         [TearDown]
